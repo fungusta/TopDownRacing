@@ -9,48 +9,79 @@ public class PlayerMovement : MonoBehaviour
 {
     public CharacterController controller;
 
-    public float speed = 12f;
-    public float gravity = -9.81f;
+    private float speed = 30f;
+    private readonly float gravity = -9.81f;
+    private readonly float rotateSpeed = 100f;
 
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
+    public GameObject[] wheelGameObjectList;
+    private float groundCheckRadius = 0.2f;
     public LayerMask groundMask; //For what object tags should the ground check for
 
 
-    public bool isGrounded;
+    private bool isGrounded;
 
-    public Vector3 velocity;
+    private Vector3 velocity;
 
     // Start is called before the first frame update
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        groundCheck = GameObject.FindWithTag("Ground Check").transform;
+        wheelGameObjectList = GameObject.FindGameObjectsWithTag("Ground Check");
     }   
 
     // Update is called once per frame
     void Update()
     {
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
+        UseInputsToMovePlayer();
+        UseInputsToRotatePlayer();
+        CheckIfGrounded();
+        UpdateDownwardVelocityWhenGrounded();
+    }
+
+    private void UseInputsToRotatePlayer()
+    {
+        if (Input.GetAxis("Vertical") == 0f) //guard clause, when no forward movement, no rotation
+        {
+            return;
+        }
+
+        float horizontal = Input.GetAxis("Horizontal");
+        float rotation = horizontal * rotateSpeed * Time.deltaTime;
+        transform.Rotate(0f, rotation, 0f);
+    }
+
+    private void UseInputsToMovePlayer()
+    {
+        float vertical = Input.GetAxis("Vertical");
         //If W key is pressed, Input.GetAxis("Vertical") will be equals to 1, for horizontal, it is S key
-
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundCheckRadius, groundMask);
-        //Will check if a sphere of radius:groundCheckRadius comes into contact with any gameObjects of type groundMask
-
-        Vector3 moveAmount = transform.right * x + transform.forward * z;
-
+        
+        Vector3 moveAmount = transform.forward * vertical;
         controller.Move(speed * Time.deltaTime * moveAmount);
         //multiply by deltaTime to make it frame Independent
+    }
 
+    private void CheckIfGrounded()
+    {
+        foreach (GameObject wheelRadius in wheelGameObjectList)
+        {
+            isGrounded = Physics.CheckSphere(wheelRadius.transform.position, groundCheckRadius, groundMask);
+        }
+        //Will check if a sphere of radius:groundCheckRadius comes into contact with any gameObjects of type groundMask
+    }
+
+    private void UpdateDownwardVelocityWhenGrounded()
+    {
         if (!isGrounded)
         {
             velocity.y += gravity * Mathf.Pow(Time.deltaTime, 2); //Affected by gravity
 
             controller.Move(velocity);
-        } else
+        }
+        else
         {
             velocity.y = -2f; //Not affected
         }
     }
+
+    
 }
