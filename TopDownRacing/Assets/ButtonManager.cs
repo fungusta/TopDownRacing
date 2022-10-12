@@ -5,18 +5,26 @@ using UnityEngine;
 
 public class ButtonManager : MonoBehaviour
 {
-    public void onClickStartHost()
+    public void OnClickStartHost()
     {
         NetworkManager.Singleton.StartHost();
+        DeactiveUI();
     }
 
-    public void onClickStartServer()
+    public void OnClickStartServer()
     {
         NetworkManager.Singleton.StartServer();
+        DeactiveUI();
     }
 
-    public void onClickStartClient()
+    public void OnClickStartClient()
     {
         NetworkManager.Singleton.StartClient();
+        DeactiveUI();
+    }
+
+    private void DeactiveUI()
+    {
+        this.gameObject.SetActive(false);
     }
 }
