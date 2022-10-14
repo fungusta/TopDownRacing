@@ -16,9 +16,6 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Button startClientButton;
 
-    [SerializeField]
-    private TextMeshProUGUI playersInGameText;
-
     private void Start()
     {
         startHostButton.onClick.AddListener(() =>
@@ -54,11 +51,5 @@ public class UIManager : MonoBehaviour
 
             }
         });
-    }
-
-    private void Update()
-    {
-        playersInGameText.text = "Player";
-        //playersInGameText.text = $"Players in game: {PlayersManager.Instance.PlayersInGame}";
     }
 }

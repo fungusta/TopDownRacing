@@ -14,21 +14,18 @@ public class CheckPointsInteractions : MonoBehaviour
             return;
         }
         PlayerLapManager player = other.gameObject.GetComponent<PlayerLapManager>();
-
-        if (player.checkpointIndex != index - 1) //guard clause 2
+        if (!player.IsSameCheckpoint(index - 1)) //guard clause 2
         {
             return;
         }
 
-        player.checkpointIndex = index;
+        player.UpdateCheckpointIndex(index);
         Debug.Log("Past a checkpoint");
         if (!isEnd) //guard clause 3
         {
             return;
         }
-
-        player.lapNumber++;
-        player.checkpointIndex = 0;
+        player.NewLap();
         Debug.Log("Current Lap: " + player.lapNumber);
 
     }
